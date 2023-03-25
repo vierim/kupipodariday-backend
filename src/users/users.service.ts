@@ -28,8 +28,14 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(name: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: name,
+      },
+    });
+
+    return user;
   }
 
   updateOne(id: number, updateUserDto: UpdateUserDto) {
