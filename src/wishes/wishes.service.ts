@@ -6,6 +6,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 
 import { Wish } from './entities/wish.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
@@ -14,8 +15,18 @@ export class WishesService {
     private wishRepository: Repository<Wish>,
   ) {}
 
-  create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
+  async createOne(user: User, createWishDto: CreateWishDto) {
+    console.log({
+      ...createWishDto,
+      owner: user,
+    });
+
+    const wish = await this.wishRepository.save({
+      ...createWishDto,
+      owner: user,
+    });
+
+    return wish;
   }
 
   findOne(id: number) {
