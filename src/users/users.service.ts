@@ -28,10 +28,20 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async findOne(name: string): Promise<User> {
+  async findById(userId: any): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
-        username: name,
+        id: userId,
+      },
+    });
+
+    return user;
+  }
+
+  async findOne(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
       },
     });
 
