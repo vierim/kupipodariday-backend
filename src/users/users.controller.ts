@@ -5,12 +5,10 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -18,25 +16,45 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  findOne(@Param('id') id: string) {
-    console.log(id);
+  find(@Param('id') id: string) {
+    //console.log('Get users/me');
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
   updateOne(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    //console.log('Patch users/me');
     return this.usersService.updateOne(+id, updateUserDto);
   }
 
-  @Delete(':id')
-  removeOne(@Param('id') id: string) {
-    return this.usersService.removeOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('me/wishes')
+  findWishes() {
+    //console.log('Get users/me/wishes');
+    return 'users/me/wishes';
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':username')
+  findUser(@Param('username') username: string) {
+    //console.log(`Get users/:username - ${username}`);
+    return this.usersService.findOne(username);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':username/wishes')
+  findUserWishes() {
+    //console.log('Get users/{username}/wishes');
+    return 'users/{username}/wishes';
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('find')
+  findOne(@Body('query') query: string) {
+    //console.log('Post users/find');
+    return this.usersService.findOne(query);
   }
 }
