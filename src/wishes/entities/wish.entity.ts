@@ -43,7 +43,9 @@ export class Wish {
   @Column()
   price: number; // price — стоимость подарка, с округлением до сотых, число.
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   raised: number; // raised — сумма предварительного сбора или сумма, которую пользователи сейчас готовы скинуть на подарок. Также округляется до сотых.
 
   @ManyToOne(() => User, (user) => user.wishes)
@@ -56,6 +58,8 @@ export class Wish {
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[]; // offers — массив ссылок на заявки скинуться от других пользователей.
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   copied: number; // copied — содержит cчётчик тех, кто скопировал подарок себе. Целое десятичное число.
 }
