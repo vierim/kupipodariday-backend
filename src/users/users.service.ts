@@ -38,11 +38,9 @@ export class UsersService {
     return user;
   }
 
-  updateOne(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async updateOne(userId: any, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.update(userId, updateUserDto);
 
-  removeOne(id: number) {
-    return `This action removes a #${id} user`;
+    return user;
   }
 }

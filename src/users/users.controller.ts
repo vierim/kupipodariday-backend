@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
@@ -19,15 +20,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   find(@Param('id') id: string) {
-    //console.log('Get users/me');
     return this.usersService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  updateOne(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    //console.log('Patch users/me');
-    return this.usersService.updateOne(+id, updateUserDto);
+  updateOne(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateOne(req.user, updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
