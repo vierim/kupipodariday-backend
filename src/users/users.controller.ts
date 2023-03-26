@@ -20,7 +20,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Request() req) {
-    console.log(req);
     const user = req.user;
 
     return this.usersService.findOne(user.username);
@@ -35,28 +34,24 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
   findWishes() {
-    //console.log('Get users/me/wishes');
     return 'users/me/wishes';
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':username')
   findUser(@Param('username') username: string) {
-    //console.log(`Get users/:username - ${username}`);
     return this.usersService.findOne(username);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':username/wishes')
   findUserWishes() {
-    //console.log('Get users/{username}/wishes');
     return 'users/{username}/wishes';
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('find')
   findOne(@Body('query') query: string) {
-    //console.log('Post users/find');
     return this.usersService.findOne(query);
   }
 }
