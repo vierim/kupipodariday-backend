@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Request,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { OffersService } from './offers.service';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -11,8 +19,8 @@ export class OffersController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createOfferDto: CreateOfferDto) {
-    //return this.offersService.create(createOfferDto);
+  create(@Request() req, @Body() createOfferDto: CreateOfferDto) {
+    return this.offersService.createOne(req.user, createOfferDto);
   }
 
   @UseGuards(JwtAuthGuard)

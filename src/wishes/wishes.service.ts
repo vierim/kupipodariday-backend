@@ -29,8 +29,10 @@ export class WishesService {
     return wish;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wish`;
+  async findOne(id: number) {
+    const wish = await this.wishRepository.findOneBy({ id });
+
+    return wish;
   }
 
   updateOne(id: number, updateWishDto: UpdateWishDto) {
