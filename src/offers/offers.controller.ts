@@ -19,19 +19,19 @@ export class OffersController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Request() req, @Body() createOfferDto: CreateOfferDto) {
+  createOne(@Request() req, @Body() createOfferDto: CreateOfferDto) {
     return this.offersService.createOne(req.user, createOfferDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findOne() {
-    //return this.offersService.findOne(+id);
+  findAll(@Request() req) {
+    return this.offersService.findAll(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  find(@Param('id') id: string) {
-    //return this.offersService.updateOne(+id, updateOfferDto);
+  findOne(@Param('id') id: number) {
+    return this.offersService.findOne(id);
   }
 }

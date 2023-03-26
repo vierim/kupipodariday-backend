@@ -31,7 +31,24 @@ export class OffersService {
     return offer;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} offer`;
+  async findOne(id: number) {
+    const offer = await this.offerRepository.findOneBy({ id });
+
+    return offer;
+  }
+
+  async findAll(userId: number) {
+    const offers = await this.offerRepository.find({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    return offers;
   }
 }
