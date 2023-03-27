@@ -28,13 +28,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch('me')
   updateOne(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateOne(req.user, updateUserDto);
+    return this.usersService.updateOne(req.user.id, updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
-  findWishes() {
-    return 'users/me/wishes';
+  findWishes(@Request() req) {
+    return this.usersService.findUserWishes(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -51,7 +51,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Post('find')
-  findOne(@Body('query') query: string) {
-    return this.usersService.findOne(query);
+  findMany(@Body('query') query: string) {
+    return this.usersService.findMany(query);
   }
 }

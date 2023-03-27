@@ -3,7 +3,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateWishDto } from './dto/create-wish.dto';
-import { UpdateWishDto } from './dto/update-wish.dto';
 
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -35,11 +34,19 @@ export class WishesService {
     return wish;
   }
 
-  updateOne(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
-  }
+  async findMany(userId: number) {
+    const wishes = await this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      where: {
+        owner: {
+          id: userId,
+        },
+      },
+    });
 
-  removeOne(id: number) {
-    return `This action removes a #${id} wish`;
+    return wishes;
   }
 }
