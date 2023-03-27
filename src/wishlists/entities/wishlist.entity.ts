@@ -5,10 +5,13 @@ import {
   UpdateDateColumn,
   Column,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-import { Length } from 'class-validator';
+import { Length, MaxLength } from 'class-validator';
 
 import { User } from '../../users/entities/user.entity';
+import { Wish } from '../../wishes/entities/wish.entity';
 
 @Entity()
 export class Wishlist {
@@ -33,9 +36,9 @@ export class Wishlist {
   name: string; // name — название списка.  Не может быть длиннее 250 символов и короче одного;
 
   @Column({
-    type: 'varchar',
-    length: 1500,
+    nullable: true,
   })
+  @MaxLength(1500)
   description: string; // description — описание подборки, строка до 1500 символов;
 
   @Column()
@@ -44,6 +47,7 @@ export class Wishlist {
   @ManyToOne(() => User, (user) => user.wishlists)
   owner: User;
 
-  @Column()
-  items: string; // items содержит набор ссылок на подарки.
+  @ManyToMany(() => Wish)
+  @JoinTable()
+  items: Wish[]; // items содержит набор ссылок на подарки.
 }
