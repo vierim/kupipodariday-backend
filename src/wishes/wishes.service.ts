@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 
 import { Wish } from './entities/wish.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
@@ -15,11 +15,6 @@ export class WishesService {
   ) {}
 
   async createOne(user: User, createWishDto: CreateWishDto) {
-    console.log({
-      ...createWishDto,
-      owner: user,
-    });
-
     const wish = await this.wishRepository.save({
       ...createWishDto,
       owner: user,
@@ -28,8 +23,8 @@ export class WishesService {
     return wish;
   }
 
-  async findOne(id: number) {
-    const wish = await this.wishRepository.findOneBy({ id });
+  async findOne(wishId: number) {
+    const wish = await this.wishRepository.findOneBy({ id: wishId });
 
     return wish;
   }
@@ -45,6 +40,18 @@ export class WishesService {
           id: userId,
         },
       },
+    });
+
+    return wishes;
+  }
+
+  async findLastWishes() {
+    const wishes = await this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      take: 40,
     });
 
     return wishes;

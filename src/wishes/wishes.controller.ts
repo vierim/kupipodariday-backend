@@ -29,7 +29,7 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Get('last')
   findLastWishes() {
-    //return this.wishesService.findOne(+id);
+    return this.wishesService.findLastWishes();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -40,13 +40,13 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne() {
-    //return this.wishesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.wishesService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  updateOne(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
+  updateOne(@Param('id') id: number, @Body() updateWishDto: UpdateWishDto) {
     //return this.wishesService.updateOne(+id, updateWishDto);
   }
 
