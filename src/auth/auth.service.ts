@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
-import { UserUnauthorizedException } from './exceptions';
 
 import type { TLoginResponse } from '../types/response';
 import { User } from '../users/entities/user.entity';
@@ -22,11 +21,10 @@ export class AuthService {
   ): Promise<Omit<User, 'password'>> {
     const user = await this.usersService.findOne(username);
     if (!user) {
-      throw new UserUnauthorizedException();
+      return null;
     }
 
     const isMatch = await bcrypt.compare(pass, user.password);
-
     if (user && isMatch) {
       const { password, ...result } = user;
       return result;
