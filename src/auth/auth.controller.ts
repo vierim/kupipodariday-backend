@@ -1,15 +1,26 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  UseFilters,
+} from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 
 import { LocalAuthGuard } from './guards/local-auth.guard';
-
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserAlreadyExistsException } from './exceptions';
+import { UserAlreadyExistsExceptionFilter } from '../middlewares/user-exist.filter';
 
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
+
+import type { TLoginResponse } from '../types/response';
 
 @Controller()
+@UseFilters(UserAlreadyExistsExceptionFilter)
 export class AuthController {
   constructor(
     private userService: UsersService,
@@ -18,14 +29,21 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const user = this.userService.create(createUserDto);
+    const { username, email } = createUserDto;
 
-    return user;
+    if (
+      (await this.userService.findByEmail(email)) ||
+      (await this.userService.findOne(username))
+    ) {
+      throw new UserAlreadyExistsException();
+    }
+
+    return await this.userService.create(createUserDto);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async login(@Request() req) {
+  async login(@Request() req): Promise<TLoginResponse> {
     return this.authService.login(req.user);
   }
 }
