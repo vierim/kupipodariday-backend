@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
+
 import { UsersService } from '../users/users.service';
 import { UserUnauthorizedException } from './exceptions';
+
+import type { TLoginResponse } from '../types/response';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +16,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(
+    username: string,
+    pass: string,
+  ): Promise<Omit<User, 'password'>> {
     const user = await this.usersService.findOne(username);
     if (!user) {
       throw new UserUnauthorizedException();
@@ -28,7 +35,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(user: User): Promise<TLoginResponse> {
     const payload = { username: user.username, sub: user.id };
 
     return {
