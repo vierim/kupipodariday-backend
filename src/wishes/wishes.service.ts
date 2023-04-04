@@ -24,7 +24,15 @@ export class WishesService {
   }
 
   async findOne(wishId: number) {
-    const wish = await this.wishRepository.findOneBy({ id: wishId });
+    const wish = await this.wishRepository.findOne({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      where: {
+        id: wishId,
+      },
+    });
 
     return wish;
   }
@@ -55,5 +63,9 @@ export class WishesService {
     });
 
     return wishes;
+  }
+
+  async raiseAmount(wishId: number, amount: number) {
+    return await this.wishRepository.update({ id: wishId }, { raised: amount });
   }
 }

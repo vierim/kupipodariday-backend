@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateOfferDto } from './dto/create-offer.dto';
 
 @Controller('offers')
@@ -26,7 +25,7 @@ export class OffersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Request() req) {
-    return this.offersService.findAll(req.user.id);
+    return this.offersService.findMany(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

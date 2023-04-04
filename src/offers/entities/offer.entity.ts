@@ -29,16 +29,16 @@ export class Offer {
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.offers)
-  user: User; // user содержит id желающего скинуться;
+  user: User;
 
   @ManyToOne(() => Wish, (wish) => wish.offers)
-  item: Wish; // item содержит ссылку на товар;
+  item: Wish;
 
   @Column()
-  amount: number; // amount — сумма заявки, округляется до двух знаков после запятой;
+  amount: number;
 
   @Column({
     default: false,
   })
-  hidden: boolean; // hidden — флаг, который определяет показывать ли информацию о скидывающемся в списке. По умолчанию равен false.
+  hidden: boolean;
 }
