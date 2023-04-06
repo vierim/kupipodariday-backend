@@ -8,7 +8,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import { User } from './entities/user.entity';
+import { Wish } from '../wishes/entities/wish.entity';
+
 import { WishesService } from '../wishes/wishes.service';
+
+import { UserNotFoundException } from './exceptions';
+import type { TUserSearchQuery } from '../types/queries';
 
 @Injectable()
 export class UsersService {
@@ -28,51 +33,51 @@ export class UsersService {
     return user;
   }
 
-  async findById(userId: any): Promise<User> {
+  async updateOne(id: number, payload: UpdateUserDto): Promise<User> {
+    const data = { ...payload };
+
+    if (payload.password) {
+      const hash = await bcrypt.hash(payload.password, 10);
+      data.password = hash;
+    }
+
+    await this.userRepository.update(id, data);
+    const user = await this.userRepository.findOneBy({ id });
+
+    return user;
+  }
+
+  async find(query: TUserSearchQuery): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
-        id: userId,
+        ...query,
       },
     });
 
-    return user;
-  }
-
-  async findOne(username: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: {
-        username: username,
-      },
-    });
+    if (!user) {
+      throw new UserNotFoundException();
+    }
 
     return user;
   }
 
-  async updateOne(userId: number, updateUserDto: UpdateUserDto) {
-    // нужно хешировать пароль, если он приходит в теле запроса. Сейчас при апдейте информации пароль записывается в базу в неизменном виде.
+  async findUserWishes(query: number | string): Promise<Wish[]> {
+    if (typeof query === 'number') {
+      return await this.wishesService.findMany(query);
+    }
 
-    await this.userRepository.update(userId, updateUserDto);
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    return user;
+    if (typeof query === 'string') {
+      const user = await this.find({ username: query });
+      return await this.wishesService.findMany(user.id);
+    }
   }
 
-  async findUserWishes(userId: number) {
-    const wishes = await this.wishesService.findMany(userId);
-
-    return wishes;
-  }
-
-  async findMany(query: string) {
+  async findMany(queryText: string) {
     const users = await this.userRepository.findBy([
-      { username: Like(`%${query}%`) },
-      { email: Like(`%${query}%`) },
+      { username: Like(`%${queryText}%`) },
+      { email: Like(`%${queryText}%`) },
     ]);
 
     return users;
-  }
-
-  async findByEmail(query: string) {
-    return await this.userRepository.findOneBy({ email: query });
   }
 }

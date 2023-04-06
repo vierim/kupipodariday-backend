@@ -32,8 +32,8 @@ export class AuthController {
     const { username, email } = payload;
 
     if (
-      (await this.userService.findByEmail(email)) ||
-      (await this.userService.findOne(username))
+      (await this.userService.find({ email })) ||
+      (await this.userService.find({ username }))
     ) {
       throw new UserAlreadyExistsException();
     }

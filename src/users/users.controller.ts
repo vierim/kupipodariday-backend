@@ -22,13 +22,15 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Request() req): Promise<User> {
-    return this.usersService.findOne(req.user.username);
+    const { username } = req.user;
+
+    return this.usersService.find({ username });
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  updateOne(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateOne(req.user.id, updateUserDto);
+  updateOne(@Request() req, @Body() payload: UpdateUserDto) {
+    return this.usersService.updateOne(req.user.id, payload);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -40,13 +42,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get(':username')
   findUser(@Param('username') username: string) {
-    return this.usersService.findOne(username);
+    return this.usersService.find({ username });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':username/wishes')
-  findUserWishes() {
-    return 'users/{username}/wishes';
+  findUserWishes(@Param('username') username: string) {
+    return this.usersService.findUserWishes(username);
   }
 
   @UseGuards(JwtAuthGuard)
