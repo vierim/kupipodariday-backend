@@ -2,13 +2,22 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MinLength,
+  MaxLength,
   IsUrl,
-  Length,
+  Min,
 } from 'class-validator';
 
 export class CreateWishDto {
-  @IsString()
-  @Length(1, 250)
+  @IsString({
+    message: 'Название подарка может быть только строкой',
+  })
+  @MinLength(1, {
+    message: 'Название подарка не может быть короче 1 символа',
+  })
+  @MaxLength(250, {
+    message: 'Название подарка не может быть длиннее 250 символов',
+  })
   name: string;
 
   @IsOptional()
@@ -20,10 +29,18 @@ export class CreateWishDto {
   image: string;
 
   @IsNotEmpty()
+  @Min(1)
   price: number;
 
   @IsNotEmpty()
-  @IsString()
-  @Length(1, 1024)
+  @IsString({
+    message: 'Описание подарка может быть только текстом',
+  })
+  @MinLength(1, {
+    message: 'Описание подарка не может быть короче 1 символа',
+  })
+  @MaxLength(1024, {
+    message: 'Описание подарка не может быть длиннее 1024 символов',
+  })
   description: string;
 }

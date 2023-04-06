@@ -14,13 +14,13 @@ export class WishesService {
     private wishRepository: Repository<Wish>,
   ) {}
 
-  async createOne(user: User, createWishDto: CreateWishDto) {
-    const wish = await this.wishRepository.save({
-      ...createWishDto,
+  async createOne(user: User, payload: CreateWishDto) {
+    await this.wishRepository.save({
+      ...payload,
       owner: user,
     });
 
-    return wish;
+    return {};
   }
 
   async findOne(wishId: number) {
