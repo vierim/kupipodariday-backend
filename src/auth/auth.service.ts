@@ -5,8 +5,8 @@ import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
 
-import type { TLoginResponse } from '../types/response';
 import { User } from '../users/entities/user.entity';
+import type { TUserResponse, TSigninResponse } from '../types/responses';
 
 @Injectable()
 export class AuthService {
@@ -15,10 +15,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
+  async validate(
     username: string,
     pass: string,
-  ): Promise<Omit<User, 'password'>> | null {
+  ): Promise<TUserResponse> | null {
     const user = await this.usersService.findOne(username);
     if (!user) {
       return null;
@@ -27,13 +27,14 @@ export class AuthService {
     const isMatch = await bcrypt.compare(pass, user.password);
     if (user && isMatch) {
       const { password, ...result } = user;
+
       return result;
     }
 
     return null;
   }
 
-  async login(user: User): Promise<TLoginResponse> {
+  async signin(user: User): Promise<TSigninResponse> {
     const payload = { username: user.username, sub: user.id };
 
     return {

@@ -21,7 +21,7 @@ export const jwtConstants = {
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      // signOptions: { expiresIn: '180s' },
+      signOptions: { expiresIn: '180s' },
     }),
   ],
   controllers: [AuthController],

@@ -4,18 +4,26 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  Length,
   MinLength,
   MaxLength,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  @Length(2, 30)
+  @IsString({
+    message: 'Имя пользователя может быть только строкой',
+  })
+  @MinLength(2, {
+    message: 'Имя пользователя не может быть короче 2 символов',
+  })
+  @MaxLength(30, {
+    message: 'Имя пользователя не может быть длинее 30 символов',
+  })
   username: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({
+    message: 'Описание пользователя может быть только текстом',
+  })
   @MaxLength(200)
   about: string;
 
@@ -26,8 +34,17 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(2)
+  @IsNotEmpty({
+    message: 'Поле с паролем должно быть заполнено',
+  })
+  @IsString({
+    message: 'Пароль может быть только строкой',
+  })
+  @MinLength(5, {
+    message: 'Пароль не может быть короче 5 символов',
+  })
+  @MaxLength(40, {
+    message: 'Пароль не может быть длинее 40 символов',
+  })
   password: string;
 }

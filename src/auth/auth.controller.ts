@@ -6,18 +6,17 @@ import {
   Request,
   UseFilters,
 } from '@nestjs/common';
-
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 
 import { LocalAuthGuard } from './guards/local-auth.guard';
+
 import { CreateUserDto } from '../users/dto/create-user.dto';
+
 import { UserAlreadyExistsException } from './exceptions';
 import { UserAlreadyExistsExceptionFilter } from '../middlewares/user-exist.filter';
 
-import { User } from '../users/entities/user.entity';
-
-import type { TLoginResponse } from '../types/response';
+import type { TSigninResponse, TUserResponse } from '../types/responses';
 
 @Controller()
 @UseFilters(UserAlreadyExistsExceptionFilter)
@@ -28,8 +27,8 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const { username, email } = createUserDto;
+  async signup(@Body() payload: CreateUserDto): Promise<TUserResponse> {
+    const { username, email } = payload;
 
     if (
       (await this.userService.findByEmail(email)) ||
@@ -38,12 +37,12 @@ export class AuthController {
       throw new UserAlreadyExistsException();
     }
 
-    return await this.userService.create(createUserDto);
+    return await this.userService.create(payload);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async login(@Request() req): Promise<TLoginResponse> {
-    return this.authService.login(req.user);
+  async signin(@Request() req): Promise<TSigninResponse> {
+    return this.authService.signin(req.user);
   }
 }

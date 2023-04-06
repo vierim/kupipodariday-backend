@@ -36,7 +36,7 @@ export class User {
     length: 30,
   })
   @Length(2, 30)
-  username: string; // username — имя пользователя, уникальная строка от 2 до 30 символов, обязательное поле.
+  username: string;
 
   @Column({
     type: 'varchar',
@@ -44,28 +44,31 @@ export class User {
     default: 'Пока ничего не рассказал о себе',
   })
   @Length(2, 200)
-  about: string; // about — информация о пользователе, строка от 2 до 200 символов. В качестве значения по умолчанию укажите для него строку: «Пока ничего не рассказал о себе».
+  about: string;
 
   @Column({
     type: 'varchar',
     default: 'https://i.pravatar.cc/300',
   })
-  avatar: string; // avatar — ссылка на аватар. В качестве значения по умолчанию задайте https://i.pravatar.cc/300
+  avatar: string;
 
   @Column({
+    type: 'varchar',
     unique: true,
   })
-  email: string; // email — адрес электронной почты пользователя, должен быть уникален.
+  email: string;
 
-  @Column()
-  password: string; // password — пароль пользователя, строка.
+  @Column({
+    type: 'varchar',
+  })
+  password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
-  wishes: Wish[]; // wishes — список желаемых подарков. Используйте для него соответствующий тип связи.
+  wishes: Wish[];
 
   @OneToMany(() => Offer, (offer) => offer.user)
-  offers: Offer[]; // offers — содержит список подарков, на которые скидывается пользователь. Установите для него подходящий тип связи.
+  offers: Offer[];
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
-  wishlists: Wishlist[]; // wishlists - содержит список вишлистов, которые создал пользователь. Установите для него подходящий тип связи.
+  wishlists: Wishlist[];
 }
