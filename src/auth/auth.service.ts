@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 
 import { User } from '../users/entities/user.entity';
-import type { TUserResponse, TSigninResponse } from '../types/responses';
+import type { TSigninResponse } from '../types/responses';
 
 @Injectable()
 export class AuthService {
@@ -15,23 +15,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validate(
-    username: string,
-    pass: string,
-  ): Promise<TUserResponse> | null {
+  async validate(username: string, password: string): Promise<User> | null {
     const user = await this.usersService.findOne(username);
     if (!user) {
       return null;
     }
 
-    const isMatch = await bcrypt.compare(pass, user.password);
-    if (user && isMatch) {
-      const { password, ...result } = user;
+    const isMatch = await bcrypt.compare(password, user.password);
 
-      return result;
-    }
-
-    return null;
+    return isMatch ? user : null;
   }
 
   async signin(user: User): Promise<TSigninResponse> {

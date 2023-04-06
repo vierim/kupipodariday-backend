@@ -9,7 +9,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 import { User } from './entities/user.entity';
 import { WishesService } from '../wishes/wishes.service';
-import type { TUserResponse } from '../types/responses';
 
 @Injectable()
 export class UsersService {
@@ -19,17 +18,14 @@ export class UsersService {
     private wishesService: WishesService,
   ) {}
 
-  async create(payload: CreateUserDto): Promise<TUserResponse> {
+  async create(payload: CreateUserDto): Promise<User> {
     const hash = await bcrypt.hash(payload.password, 10);
-
-    const user: User = await this.userRepository.save({
+    const user = await this.userRepository.save({
       ...payload,
       password: hash,
     });
 
-    const { password, ...result } = user;
-
-    return result;
+    return user;
   }
 
   async findById(userId: any): Promise<User> {

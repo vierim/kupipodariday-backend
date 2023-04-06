@@ -11,7 +11,9 @@ import {
 import { UsersService } from './users.service';
 
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -19,10 +21,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Request() req) {
-    const user = req.user;
-
-    return this.usersService.findOne(user.username);
+  getProfile(@Request() req): Promise<User> {
+    return this.usersService.findOne(req.user.username);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -16,7 +16,8 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserAlreadyExistsException } from './exceptions';
 import { UserAlreadyExistsExceptionFilter } from '../middlewares/user-exist.filter';
 
-import type { TSigninResponse, TUserResponse } from '../types/responses';
+import { User } from '../users/entities/user.entity';
+import type { TSigninResponse } from '../types/responses';
 
 @Controller()
 @UseFilters(UserAlreadyExistsExceptionFilter)
@@ -27,7 +28,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(@Body() payload: CreateUserDto): Promise<TUserResponse> {
+  async signup(@Body() payload: CreateUserDto): Promise<User> {
     const { username, email } = payload;
 
     if (
