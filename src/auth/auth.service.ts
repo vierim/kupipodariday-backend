@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 
 import { User } from '../users/entities/user.entity';
-import type { TSigninResponse } from '../types/responses';
+import type { TSigninResponse } from '../types';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,14 @@ export class AuthService {
   ) {}
 
   async validate(username: string, password: string): Promise<User> | null {
-    const user = await this.usersService.find({ username });
+    const user = await this.usersService.find(
+      { username },
+      {
+        id: true,
+        username: true,
+        password: true,
+      },
+    );
     if (!user) {
       return null;
     }

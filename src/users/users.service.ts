@@ -47,10 +47,16 @@ export class UsersService {
     return user;
   }
 
-  async find(query: TUserSearchQuery): Promise<User> {
+  async find(
+    query: TUserSearchQuery,
+    rows: Record<string, boolean> = {},
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         ...query,
+      },
+      select: {
+        ...rows,
       },
     });
 
@@ -79,5 +85,13 @@ export class UsersService {
     ]);
 
     return users;
+  }
+
+  async isUserExist(username: string, email: string) {
+    const user = await this.userRepository.findOne({
+      where: [{ username }, { email }],
+    });
+
+    return user ? true : false;
   }
 }

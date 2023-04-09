@@ -14,10 +14,10 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
 import { UserAlreadyExistsException } from './exceptions';
-import { UserAlreadyExistsExceptionFilter } from '../middlewares/user-exist.filter';
+import { UserAlreadyExistsExceptionFilter } from '../filters/user-exist.filter';
 
 import { User } from '../users/entities/user.entity';
-import type { TSigninResponse } from '../types/responses';
+import type { TSigninResponse, TAdvancedRequest } from '../types';
 
 @Controller()
 @UseFilters(UserAlreadyExistsExceptionFilter)
@@ -31,19 +31,18 @@ export class AuthController {
   async signup(@Body() payload: CreateUserDto): Promise<User> {
     const { username, email } = payload;
 
-    if (
-      (await this.userService.find({ email })) ||
-      (await this.userService.find({ username }))
-    ) {
+    if (await this.userService.isUserExist(username, email)) {
       throw new UserAlreadyExistsException();
     }
 
-    return await this.userService.create(payload);
+    await this.userService.create(payload);
+
+    return await this.userService.find({ username });
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async signin(@Request() req): Promise<TSigninResponse> {
+  async signin(@Request() req: TAdvancedRequest): Promise<TSigninResponse> {
     return this.authService.signin(req.user);
   }
 }

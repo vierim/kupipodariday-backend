@@ -29,7 +29,9 @@ export class CreateWishDto {
   image: string;
 
   @IsNotEmpty()
-  @Min(1)
+  @Min(1, {
+    message: 'Стоимость подарка должна быть больше нуля',
+  })
   price: number;
 
   @IsNotEmpty()

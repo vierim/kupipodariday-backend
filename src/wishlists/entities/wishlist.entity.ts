@@ -33,21 +33,21 @@ export class Wishlist {
 
   @Column()
   @Length(1, 250)
-  name: string; // name — название списка.  Не может быть длиннее 250 символов и короче одного;
+  name: string;
 
   @Column({
-    nullable: true,
+    default: '',
   })
   @MaxLength(1500)
-  description: string; // description — описание подборки, строка до 1500 символов;
+  description: string;
 
   @Column()
-  image: string; // image — обложка для подборки;
+  image: string;
 
   @ManyToOne(() => User, (user) => user.wishlists)
   owner: User;
 
   @ManyToMany(() => Wish)
   @JoinTable()
-  items: Wish[]; // items содержит набор ссылок на подарки.
+  items: Wish[];
 }

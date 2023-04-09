@@ -1,4 +1,3 @@
-import { Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import { Length, Min } from 'class-validator';
 
 import { User } from '../../users/entities/user.entity';
 import { Offer } from '../../offers/entities/offer.entity';
@@ -32,34 +32,35 @@ export class Wish {
 
   @Column()
   @Length(1, 250)
-  name: string; // name — название подарка. Не может быть длиннее 250 символов и короче одного.
+  name: string;
 
   @Column()
-  link: string; // link — ссылка на интернет-магазин, в котором можно приобрести подарок, строка.
+  link: string;
 
   @Column()
-  image: string; // image - ссылка на изображение подарка, строка. Должна быть валидным URL.
+  image: string;
 
   @Column()
-  price: number; // price — стоимость подарка, с округлением до сотых, число.
+  @Min(1)
+  price: number;
 
   @Column({
     default: 0,
   })
-  raised: number; // raised — сумма предварительного сбора или сумма, которую пользователи сейчас готовы скинуть на подарок. Также округляется до сотых.
+  raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
-  owner: User; // owner — ссылка на пользователя, который добавил пожелание подарка.
+  owner: User;
 
   @Column()
   @Length(1, 1024)
-  description: string; // description — строка с описанием подарка длиной от 1 и до 1024 символов.
+  description: string;
 
   @OneToMany(() => Offer, (offer) => offer.item)
-  offers: Offer[]; // offers — массив ссылок на заявки скинуться от других пользователей.
+  offers: Offer[];
 
   @Column({
     default: 0,
   })
-  copied: number; // copied — содержит cчётчик тех, кто скопировал подарок себе. Целое десятичное число.
+  copied: number;
 }

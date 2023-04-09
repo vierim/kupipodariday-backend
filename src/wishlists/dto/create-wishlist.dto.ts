@@ -1,17 +1,36 @@
-import { Allow, IsOptional, IsString, IsUrl, Length } from 'class-validator';
+import {
+  IsArray,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateWishlistDto {
-  @IsString()
-  @Length(1, 250)
+  @IsString({
+    message: 'Название списка подарков должно быть строкой',
+  })
+  @MinLength(1, {
+    message: 'Название списка подарков не может быть короче 1 символа',
+  })
+  @MaxLength(250, {
+    message: 'Название списка подарков не может быть длинее 250 символов',
+  })
   name: string;
+
+  @IsOptional()
+  @IsString({
+    message: 'Описание списка подарков должно быть текстом',
+  })
+  @MaxLength(1500, {
+    message: 'Описание списка подарков не может быть длинее 1500 символов',
+  })
+  description: string;
 
   @IsUrl()
   image: string;
 
-  @IsOptional()
-  @IsString()
-  description: string;
-
-  @Allow()
+  @IsArray()
   itemsId: number[];
 }

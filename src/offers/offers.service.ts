@@ -8,7 +8,11 @@ import { Offer } from './entities/offer.entity';
 import { User } from '../users/entities/user.entity';
 import { WishesService } from '../wishes/wishes.service';
 
-import { AmountExceedException, OwnInstanceException } from './exceptions';
+import {
+  AmountExceedException,
+  OfferNotFoundException,
+  OwnInstanceException,
+} from './exceptions';
 import { WishNotFoundException } from '../wishes/exceptions';
 
 @Injectable()
@@ -49,8 +53,8 @@ export class OffersService {
     return {};
   }
 
-  async findOne(itemId: number) {
-    const offer = await this.offerRepository.find({
+  async findOne(id: number) {
+    const offer = await this.offerRepository.findOne({
       relations: [
         'item',
         'item.owner',
@@ -60,9 +64,13 @@ export class OffersService {
         'user.offers',
       ],
       where: {
-        id: itemId,
+        id,
       },
     });
+
+    if (!offer) {
+      throw new OfferNotFoundException();
+    }
 
     return offer;
   }

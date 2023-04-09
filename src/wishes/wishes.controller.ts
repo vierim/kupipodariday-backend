@@ -12,10 +12,12 @@ import {
 
 import { WishesService } from './wishes.service';
 
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
+
+import type { TAdvancedRequest } from '../types';
 
 @Controller('wishes')
 export class WishesController {
@@ -23,7 +25,10 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createOne(@Request() req, @Body() createWishDto: CreateWishDto) {
+  createOne(
+    @Request() req: TAdvancedRequest,
+    @Body() createWishDto: CreateWishDto,
+  ) {
     return this.wishesService.createOne(req.user, createWishDto);
   }
 
@@ -36,7 +41,7 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Get('top')
   findTopWishes() {
-    //return this.wishesService.findOne(+id);
+    return this.wishesService.findTopWishes();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,19 +52,23 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  updateOne(@Param('id') id: number, @Body() updateWishDto: UpdateWishDto) {
-    //return this.wishesService.updateOne(+id, updateWishDto);
+  updateOne(
+    @Param('id') id: number,
+    @Request() req: TAdvancedRequest,
+    @Body() updateWishDto: UpdateWishDto,
+  ) {
+    return this.wishesService.updateOne(id, req.user, updateWishDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  removeOne(@Param('id') id: string) {
-    //return this.wishesService.removeOne(+id);
+  removeOne(@Param('id') id: number, @Request() req: TAdvancedRequest) {
+    return this.wishesService.removeOne(id, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/copy')
-  copyOne(@Body() createWishDto: CreateWishDto) {
-    //return this.wishesService.create(createWishDto);
+  copyOne(@Param('id') id: number, @Request() req: TAdvancedRequest) {
+    return this.wishesService.copyOne(id, req.user);
   }
 }

@@ -15,13 +15,15 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { User } from './entities/user.entity';
 
+import type { TAdvancedRequest } from '../types';
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Request() req): Promise<User> {
+  getProfile(@Request() req: TAdvancedRequest): Promise<User> {
     const { username } = req.user;
 
     return this.usersService.find({ username });
@@ -29,13 +31,13 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  updateOne(@Request() req, @Body() payload: UpdateUserDto) {
+  updateOne(@Request() req: TAdvancedRequest, @Body() payload: UpdateUserDto) {
     return this.usersService.updateOne(req.user.id, payload);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
-  findWishes(@Request() req) {
+  findWishes(@Request() req: TAdvancedRequest) {
     return this.usersService.findUserWishes(req.user.id);
   }
 

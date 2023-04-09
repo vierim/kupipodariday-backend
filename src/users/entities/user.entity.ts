@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
   Column,
   OneToMany,
 } from 'typeorm';
@@ -30,9 +31,9 @@ export class User {
   })
   updatedAt: Date;
 
+  @Index({ unique: true })
   @Column({
     type: 'varchar',
-    unique: true,
     length: 30,
   })
   @Length(2, 30)
@@ -52,14 +53,15 @@ export class User {
   })
   avatar: string;
 
+  @Index({ unique: true })
   @Column({
     type: 'varchar',
-    unique: true,
   })
   email: string;
 
   @Column({
     type: 'varchar',
+    select: false,
   })
   password: string;
 
