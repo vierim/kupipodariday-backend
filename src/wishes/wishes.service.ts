@@ -180,6 +180,7 @@ export class WishesService {
       image,
       price,
       description,
+      copied: 0,
       owner: user,
     });
 
