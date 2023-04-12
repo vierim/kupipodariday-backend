@@ -13,6 +13,7 @@ import {
   WishRaisedException,
   WrongOwnerException,
   CopyOwnWishException,
+  WishAlreadyExistException,
 } from './exceptions';
 
 @Injectable()
@@ -161,6 +162,8 @@ export class WishesService {
       },
     });
 
+    const { id, name, link, image, price, description, copied } = wish;
+
     if (!wish) {
       throw new WishNotFoundException();
     }
@@ -169,9 +172,18 @@ export class WishesService {
       throw new CopyOwnWishException();
     }
 
-    const { id, name, link, image, price, description, copied } = wish;
-    const newCopiesCount = copied + 1;
+    const similarWishes = await this.hasSimilarWishes(
+      user,
+      name,
+      link,
+      price,
+      description,
+    );
+    if (similarWishes.length) {
+      throw new WishAlreadyExistException();
+    }
 
+    const newCopiesCount = copied + 1;
     await this.wishRepository.update(id, { copied: newCopiesCount });
 
     const newWish = await this.wishRepository.save({
@@ -185,5 +197,30 @@ export class WishesService {
     });
 
     return newWish;
+  }
+
+  async hasSimilarWishes(
+    user: User,
+    name: string,
+    link: string,
+    price: number,
+    description: string,
+  ): Promise<Wish[]> {
+    const wish = await this.wishRepository.find({
+      relations: {
+        owner: true,
+      },
+      where: {
+        name,
+        link,
+        price,
+        description,
+        owner: {
+          id: user.id,
+        },
+      },
+    });
+
+    return wish;
   }
 }
