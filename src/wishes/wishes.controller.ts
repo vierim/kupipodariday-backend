@@ -20,10 +20,10 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import type { TAdvancedRequest } from '../types';
 
 @Controller('wishes')
+@UseGuards(JwtAuthGuard)
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   createOne(
     @Request() req: TAdvancedRequest,
@@ -32,25 +32,21 @@ export class WishesController {
     return this.wishesService.createOne(req.user, createWishDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('last')
   findLastWishes() {
     return this.wishesService.findLastWishes();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('top')
   findTopWishes() {
     return this.wishesService.findTopWishes();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.wishesService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   updateOne(
     @Param('id') id: number,
@@ -60,13 +56,11 @@ export class WishesController {
     return this.wishesService.updateOne(id, req.user, updateWishDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   removeOne(@Param('id') id: number, @Request() req: TAdvancedRequest) {
     return this.wishesService.removeOne(id, req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post(':id/copy')
   copyOne(@Param('id') id: number, @Request() req: TAdvancedRequest) {
     return this.wishesService.copyOne(id, req.user);

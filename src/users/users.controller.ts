@@ -18,10 +18,10 @@ import { User } from './entities/user.entity';
 import type { TAdvancedRequest } from '../types';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Request() req: TAdvancedRequest): Promise<User> {
     const { username } = req.user;
@@ -29,31 +29,26 @@ export class UsersController {
     return this.usersService.find({ username });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch('me')
   updateOne(@Request() req: TAdvancedRequest, @Body() payload: UpdateUserDto) {
     return this.usersService.updateOne(req.user.id, payload);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
   findWishes(@Request() req: TAdvancedRequest) {
     return this.usersService.findUserWishes(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':username')
   findUser(@Param('username') username: string) {
     return this.usersService.find({ username });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':username/wishes')
   findUserWishes(@Param('username') username: string) {
     return this.usersService.findUserWishes(username);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('find')
   findMany(@Body('query') query: string) {
     return this.usersService.findMany(query);

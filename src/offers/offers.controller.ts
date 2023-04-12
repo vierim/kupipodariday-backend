@@ -15,10 +15,10 @@ import { CreateOfferDto } from './dto/create-offer.dto';
 import type { TAdvancedRequest } from '../types';
 
 @Controller('offers')
+@UseGuards(JwtAuthGuard)
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   createOne(
     @Request() req: TAdvancedRequest,
@@ -27,13 +27,11 @@ export class OffersController {
     return this.offersService.createOne(req.user, createOfferDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Request() req: TAdvancedRequest) {
     return this.offersService.findMany(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.offersService.findOne(id);
