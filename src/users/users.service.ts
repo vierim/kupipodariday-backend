@@ -13,6 +13,8 @@ import { Wish } from '../wishes/entities/wish.entity';
 import { WishesService } from '../wishes/wishes.service';
 
 import { UserNotFoundException } from './exceptions';
+import { UserAlreadyExistsException } from '../auth/exceptions';
+
 import type { TUserSearchQuery } from '../types/queries';
 
 @Injectable()
@@ -34,8 +36,14 @@ export class UsersService {
   }
 
   async updateOne(id: number, payload: UpdateUserDto): Promise<User> {
-    const data = { ...payload };
+    const { username, email } = payload;
+    if (username || email) {
+      if (await this.isUserExist(username, email)) {
+        throw new UserAlreadyExistsException();
+      }
+    }
 
+    const data = { ...payload };
     if (payload.password) {
       const hash = await bcrypt.hash(payload.password, 10);
       data.password = hash;
