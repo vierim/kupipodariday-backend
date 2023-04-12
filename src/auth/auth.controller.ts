@@ -13,7 +13,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
-import { UserAlreadyExistsException } from './exceptions';
+import { UserAlreadyExistsException } from '../users/exceptions';
 import { UserAlreadyExistsExceptionFilter } from '../filters/user-exist.filter';
 
 import { User } from '../users/entities/user.entity';

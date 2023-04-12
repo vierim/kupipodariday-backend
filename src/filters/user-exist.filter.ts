@@ -1,5 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { UserAlreadyExistsException } from '../auth/exceptions/user-exist.exception';
+import { UserAlreadyExistsException } from '../users/exceptions';
 
 @Catch(UserAlreadyExistsException)
 export class UserAlreadyExistsExceptionFilter implements ExceptionFilter {

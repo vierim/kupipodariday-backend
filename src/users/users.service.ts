@@ -12,8 +12,10 @@ import { Wish } from '../wishes/entities/wish.entity';
 
 import { WishesService } from '../wishes/wishes.service';
 
-import { UserNotFoundException } from './exceptions';
-import { UserAlreadyExistsException } from '../auth/exceptions';
+import {
+  UserNotFoundException,
+  UserAlreadyExistsException,
+} from './exceptions';
 
 import type { TUserSearchQuery } from '../types/queries';
 
@@ -26,6 +28,12 @@ export class UsersService {
   ) {}
 
   async create(payload: CreateUserDto): Promise<User> {
+    const { username, email } = payload;
+
+    if (await this.isUserExist(username, email)) {
+      throw new UserAlreadyExistsException();
+    }
+
     const hash = await bcrypt.hash(payload.password, 10);
     const user = await this.userRepository.save({
       ...payload,
