@@ -12,6 +12,7 @@ import {
   WishNotFoundException,
   WishRaisedException,
   WrongOwnerException,
+  CopyOwnWishException,
 } from './exceptions';
 
 @Injectable()
@@ -150,10 +151,10 @@ export class WishesService {
     return await this.wishRepository.update({ id: wishId }, { raised: amount });
   }
 
-  async copyOne(id: number, user: User): Promise<Wish> {
+  async copyOne(wishId: number, user: User): Promise<Wish> {
     const wish = await this.wishRepository.findOne({
       where: {
-        id,
+        id: wishId,
       },
       relations: {
         owner: true,
@@ -164,7 +165,14 @@ export class WishesService {
       throw new WishNotFoundException();
     }
 
-    const { name, link, image, price, description } = wish;
+    if (wish.owner.id === user.id) {
+      throw new CopyOwnWishException();
+    }
+
+    const { id, name, link, image, price, description, copied } = wish;
+    const newCopiesCount = copied + 1;
+
+    await this.wishRepository.update(id, { copied: newCopiesCount });
 
     const newWish = await this.wishRepository.save({
       name,
